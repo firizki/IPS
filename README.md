@@ -1,2 +1,2 @@
 # IPS
-Image Processing Simulation
+Image Processing Simulator
