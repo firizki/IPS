@@ -3,14 +3,10 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 
 from PIL import Image,ImageTk,ImageDraw
-from imagelib import ImageLib
 
-import pickle
 import logging
 import datetime
 import numpy as np
-from tensorflow import keras
-from matplotlib import pyplot
 
 from log_widget import LogWidget, LogStreamHandler
 from image_widget import InputImage, OutputImage
@@ -40,11 +36,6 @@ class IPS:
 
         self.prediction = PredictionEngine()
 
-        self.classifier = keras.models.load_model('models/face-test-1')
-        file = open('models/face-test-1/ResultsMap.pkl', 'rb')
-        self.ResultMap = pickle.load(file)
-        file.close()
-
         open_button = ttk.Button(
             self.upload_frame,
             text='Choose an image',
@@ -64,15 +55,12 @@ class IPS:
         module_logger.info("Load image input: "+ self.filename)
 
         # Prediction using Keras
-        # test_image=keras.preprocessing.image.load_img(self.filename,target_size=(64, 64))
-        # test_image=keras.preprocessing.image.img_to_array(test_image)
-        # test_image=np.expand_dims(test_image,axis=0)
-        # result=self.classifier.predict(test_image)
-        # module_logger.info("Prediction is: " + self.ResultMap[np.argmax(result)])
+        result=self.prediction.keras(self.filename)
+        module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
 
         # Prediction using CNN
-        pixels = pyplot.imread(self.filename)
-        prediction_result = self.prediction.mtcnn(pixels)
+        prediction_result = self.prediction.mtcnn( self.filename)
+        module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         image_data = Image.open(self.filename)
         image_output = image_data.copy()
@@ -82,8 +70,8 @@ class IPS:
             x, y, width, height = result['box']
             draw.rectangle((x, y, x+width, y+height), outline="red", width=2)
 
-        image_data.thumbnail((400,400), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
-        image_output.thumbnail((400,400), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
+        image_data.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
+        image_output.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
 
         self.imagetk_input = ImageTk.PhotoImage(image_data)
         self.imagetk_output = ImageTk.PhotoImage(image_output)
@@ -99,6 +87,6 @@ if __name__ == "__main__":
     module_logger.addHandler(guiHandler)
     module_logger.setLevel(logging.INFO)
     now = datetime.datetime.now()
-    module_logger.info(str(now) + " Starting application...")  
+    module_logger.info(str(now) + " Starting application...")
 
     ips.root.mainloop()
