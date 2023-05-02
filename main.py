@@ -64,17 +64,16 @@ class IPS:
         module_logger.info("Load image input: "+ self.filename)
 
         # Prediction using Keras
-        test_image=keras.preprocessing.image.load_img(self.filename,target_size=(64, 64))
-        test_image=keras.preprocessing.image.img_to_array(test_image)
-        test_image=np.expand_dims(test_image,axis=0)
-        result=self.classifier.predict(test_image)
+        # test_image=keras.preprocessing.image.load_img(self.filename,target_size=(64, 64))
+        # test_image=keras.preprocessing.image.img_to_array(test_image)
+        # test_image=np.expand_dims(test_image,axis=0)
+        # result=self.classifier.predict(test_image)
         # module_logger.info("Prediction is: " + self.ResultMap[np.argmax(result)])
 
         # Prediction using CNN
         pixels = pyplot.imread(self.filename)
         prediction_result = self.prediction.mtcnn(pixels)
 
-        # Show image and result
         image_data = Image.open(self.filename)
         image_output = image_data.copy()
 
