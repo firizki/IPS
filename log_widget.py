@@ -3,8 +3,14 @@ import logging
 
 class LogWidget(tkinter.Text):
     def __init__(self, parent):
-        tkinter.Text.__init__(self,parent,state="disabled")
-        self.grid(column=1, row=3)
+        self.scrollbar = tkinter.Scrollbar(parent)
+        self.scrollbar.pack(side="right", fill="y")
+
+        tkinter.Text.__init__(self, parent, yscrollcommand=self.scrollbar.set)
+        self.pack(side="left", fill="both", expand=True)
+
+        self.scrollbar.config(command=self.yview)
+
 
 class LogStreamHandler(logging.StreamHandler):
     def __init__(self, textctrl):
