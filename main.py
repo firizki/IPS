@@ -55,8 +55,8 @@ class IPS:
         module_logger.info("Load image input: "+ self.filename)
 
         # Prediction using Keras
-        result=self.prediction.keras(self.filename)
-        module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
+        # result=self.prediction.keras(self.filename)
+        # module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
 
         # Prediction using CNN
         prediction_result = self.prediction.mtcnn( self.filename)
@@ -67,8 +67,23 @@ class IPS:
 
         draw = ImageDraw.Draw(image_output)
         for result in prediction_result:
+            if result['confidence'] < 0.8:
+                continue
+            module_logger.info("Prediction result: " + str(result['confidence']))
+            
             x, y, width, height = result['box']
             draw.rectangle((x, y, x+width, y+height), outline="red", width=2)
+
+            # for key in result['keypoints']:
+            #     x, y = result['keypoints'][key]
+            #     dot_radius = 3
+            #     draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
+
+            dot_radius = 3
+            x, y = result['keypoints']['left_eye']
+            draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
+            x, y = result['keypoints']['right_eye']
+            draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
 
         image_data.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
         image_output.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
