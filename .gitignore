@@ -1,6 +1,7 @@
 __pycache__/
 example/
 annotations/
+data/
 datasets/
 models/
 .venv/
