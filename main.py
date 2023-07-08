@@ -58,8 +58,12 @@ class IPS:
         # result=self.prediction.keras(self.filename)
         # module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
 
-        # Prediction using CNN
-        prediction_result = self.prediction.mtcnn( self.filename)
+        # Prediction using MTCNN
+        # prediction_result = self.prediction.mtcnn( self.filename)
+        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+
+        # Prediction using Retinaface
+        prediction_result = self.prediction.retinaface(self.filename)
         module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         image_data = Image.open(self.filename)
