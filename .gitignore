@@ -1,7 +1,9 @@
 __pycache__/
 example/
 annotations/
+configs/
 data/
 datasets/
+logs/
 models/
 .venv/
