@@ -1,6 +1,7 @@
 __pycache__/
 example/
 annotations/
+checkpoints/
 configs/
 data/
 datasets/
