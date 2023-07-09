@@ -1,3 +1,16 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+from bs4 import BeautifulSoup
+import torchvision
+from torchvision import transforms, datasets, models
+import torch
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
+from PIL import Image
+import matplotlib.pyplot as plt
+from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
+import matplotlib.patches as patches
+
 import pickle
 import numpy as np
 
@@ -12,19 +25,14 @@ import os
 import numpy as np
 import tensorflow as tf
 import time
+from PIL import Image
 
 from modules.models import RetinaFaceModel
-from modules.utils import (set_memory_growth, load_yaml, draw_bbox_landm,
-                        pad_input_image, recover_pad_output)
+from modules.utils import (set_memory_growth, load_yaml, draw_bbox_landm, pad_input_image, recover_pad_output)
 
 class PredictionEngine:
     def __init__(self):
         self.detector_mtcnn = MTCNN()
-
-        # self.classifier = keras.models.load_model('models/face-test-1')
-        # file = open('models/face-test-1/ResultsMap.pkl', 'rb')
-        # self.ResultMap = pickle.load(file)
-        # file.close()
 
         # Init RetinaFace
         cfg_path = './configs/retinaface_res50.yaml'
@@ -57,15 +65,19 @@ class PredictionEngine:
             print("[*] Cannot find ckpt from {}.".format(checkpoint_dir))
             exit()
 
+        # Faster RCNN #
+        self.model_fasterrcnn = self.get_model_instance_segmentation(3)
+        # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+        self.model_fasterrcnn.to(torch.device('cpu'))
+        self.model_fasterrcnn.load_state_dict(torch.load("trained_models/fasterrcnn_25epoc"))
+        self.model_fasterrcnn.eval()
+        self.faster_rcnn_transform = transforms.Compose([
+            transforms.ToTensor(),  # Convert the image to a PyTorch tensor
+        ])
+
     def mtcnn(self, image):
         pixels = pyplot.imread(image)
         return self.detector_mtcnn.detect_faces(pixels)
-
-    # def keras(self, image):
-    #     test_image=keras.preprocessing.image.load_img(image,target_size=(64, 64))
-    #     test_image=keras.preprocessing.image.img_to_array(test_image)
-    #     test_image=np.expand_dims(test_image,axis=0)
-    #     return self.classifier.predict(test_image)
 
     def retinaface(self, img_path):
         down_scale_factor = 1.0
@@ -116,3 +128,36 @@ class PredictionEngine:
             )
 
         return results
+
+    def FasterRCNN(self, img_path):
+        image_input = Image.open(img_path).convert('RGB')
+
+        # Apply the transformation pipeline to the image
+        tensor_image = self.faster_rcnn_transform(image_input)
+        preds = self.model_fasterrcnn([tensor_image])
+        print(preds)
+        results = []
+        for box in preds[0]["boxes"]:
+            xmin, ymin, xmax, ymax = box.cpu().data
+            x1 = xmin.item()
+            y1 = ymin.item()
+            x2 = xmax.item()
+            y2 = ymax.item()
+
+            results.append(
+                {
+                    'box': [x1, y1, x2-x1, y2-y1],
+                    'confidence': 0.99,
+                }
+            )
+        return results
+    
+    def get_model_instance_segmentation(self, num_classes):
+        # load an instance segmentation model pre-trained pre-trained on COCO
+        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
+        # get number of input features for the classifier
+        in_features = model.roi_heads.box_predictor.cls_score.in_features
+        # replace the pre-trained head with a new one
+        model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+
+        return model

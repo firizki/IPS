@@ -59,12 +59,16 @@ class IPS:
         # module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
 
         # Prediction using MTCNN
-        prediction_result = self.prediction.mtcnn( self.filename)
-        module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+        # prediction_result = self.prediction.mtcnn(self.filename)
+        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         # Prediction using Retinaface
         # prediction_result = self.prediction.retinaface(self.filename)
         # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+
+        # Prediction using FasterRCNN
+        prediction_result = self.prediction.FasterRCNN(self.filename)
+        module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         image_data = Image.open(self.filename)
         image_output = image_data.copy()
@@ -83,11 +87,11 @@ class IPS:
             #     dot_radius = 3
             #     draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
 
-            dot_radius = 3
-            x, y = result['keypoints']['left_eye']
-            draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
-            x, y = result['keypoints']['right_eye']
-            draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
+            # dot_radius = 3
+            # x, y = result['keypoints']['left_eye']
+            # draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
+            # x, y = result['keypoints']['right_eye']
+            # draw.ellipse((x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius), fill="red")
 
         image_data.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
         image_output.thumbnail((400,350), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
