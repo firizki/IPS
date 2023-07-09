@@ -7,4 +7,5 @@ data/
 datasets/
 logs/
 models/
+trained_models/
 .venv/
