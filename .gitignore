@@ -6,6 +6,7 @@ configs/
 data/
 datasets/
 logs/
+lightning_logs/
 models/
 trained_models/
 .venv/
