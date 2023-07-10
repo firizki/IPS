@@ -13,7 +13,6 @@ import torchvision.transforms as T
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torch.utils.data import DataLoader, Dataset
 
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 DIR_INPUT = "datasets/merged_dataset/"
@@ -145,7 +144,7 @@ train_data_loader = DataLoader(
     train_dataset,
     batch_size = 4,
     shuffle = True,
-    # num_workers = 4,
+    num_workers = 4,
     collate_fn = collate_fn
 )
 
