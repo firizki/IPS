@@ -66,10 +66,16 @@ class PredictionEngine:
             exit()
 
         # Faster RCNN #
-        self.model_fasterrcnn = self.get_model_instance_segmentation(3)
+        self.model_fasterrcnn = self.get_model_instance_segmentation(24)
         # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model_fasterrcnn.to(torch.device('cpu'))
-        self.model_fasterrcnn.load_state_dict(torch.load("trained_models/fasterrcnn_25epoc"))
+
+        # self.model_fasterrcnn.load_state_dict(torch.load("trained_models/fasterrcnn_25epoc"))
+        checkpoint = torch.load("trained_models/checkpoint.pth")
+        self.model_fasterrcnn.load_state_dict(checkpoint['model_state_dict'])
+        # optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        # epoch = checkpoint['epoch']
+        # loss = checkpoint['loss']
         self.model_fasterrcnn.eval()
         self.faster_rcnn_transform = transforms.Compose([
             transforms.ToTensor(),  # Convert the image to a PyTorch tensor
@@ -153,10 +159,18 @@ class PredictionEngine:
         return results
     
     def get_model_instance_segmentation(self, num_classes):
-        # load an instance segmentation model pre-trained pre-trained on COCO
-        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
+        # # load an instance segmentation model pre-trained pre-trained on COCO
+        # model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=FasterRCNN_ResNet50_FPN_Weights.DEFAULT)
+        # # get number of input features for the classifier
+        # in_features = model.roi_heads.box_predictor.cls_score.in_features
+        # # replace the pre-trained head with a new one
+        # model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+
+        model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights=None, weights_backbone = None)
+
         # get number of input features for the classifier
         in_features = model.roi_heads.box_predictor.cls_score.in_features
+
         # replace the pre-trained head with a new one
         model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
