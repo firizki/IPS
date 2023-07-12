@@ -41,10 +41,8 @@ class PredictionEngine:
         self.model_fasterrcnn = self.get_model_instance_segmentation(3)
         # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model_fasterrcnn.to(torch.device('cpu'))
-
-        self.model_fasterrcnn.load_state_dict(torch.load("trained_models/fasterrcnn_25epoc"))
-        # checkpoint = torch.load("trained_models/checkpoint.pth")
-        # self.model_fasterrcnn.load_state_dict(checkpoint['model_state_dict'])
+        checkpoint = torch.load("trained_models/fasterrcnn/checkpoint_29.pth")
+        self.model_fasterrcnn.load_state_dict(checkpoint['model_state_dict'])
         self.model_fasterrcnn.eval()
 
         # RetinaNet #
