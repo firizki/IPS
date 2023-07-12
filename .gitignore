@@ -8,5 +8,6 @@ datasets/
 logs/
 lightning_logs/
 models/
+runs/
 trained_models/
 .venv/

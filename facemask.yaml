@@ -1,0 +1,9 @@
+
+    train: train
+    val: valid
+    test: test
+    nc: 2
+    names:
+        0 : face_with_mask
+        1 : face_no_mask
+    

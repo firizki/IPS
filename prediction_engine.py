@@ -30,6 +30,8 @@ from PIL import Image
 from modules.models import RetinaFaceModel
 from modules.utils import (set_memory_growth, load_yaml, draw_bbox_landm, pad_input_image, recover_pad_output)
 
+from ultralytics import YOLO
+
 class PredictionEngine:
     def __init__(self):
         self.image_transform = transforms.Compose([
@@ -41,13 +43,16 @@ class PredictionEngine:
         self.model_fasterrcnn = self.get_model_instance_segmentation(3)
         # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model_fasterrcnn.to(torch.device('cpu'))
-        checkpoint = torch.load("trained_models/fasterrcnn/checkpoint_29.pth")
+        checkpoint = torch.load("trained_models/fasterrcnn/checkpoint_99.pth")
         self.model_fasterrcnn.load_state_dict(checkpoint['model_state_dict'])
         self.model_fasterrcnn.eval()
 
         # RetinaNet #
         self.model_retinanet = torch.load('trained_models/retinanet_2epoc')
         self.model_retinanet.eval()
+
+        # YOLOv8 #
+        self.model_yolov8 = YOLO(model="runs/detect/train4/weights/best.pt")
 
     def FasterRCNN(self, img_path):
         image_input = Image.open(img_path).convert('RGB')
@@ -93,6 +98,22 @@ class PredictionEngine:
                     'confidence': score,
                 }
             )
+        return results
+    
+    def YOLOv8(self, img_path):
+        preds = self.model_yolov8([img_path])
+
+        results = [] 
+        for pred in preds[0].boxes:
+            x1, y1, x2, y2 = pred.xyxy.cpu().detach().numpy()[0]
+            results.append(
+                {
+                    'box': [x1, y1, x2-x1, y2-y1],
+                    'label': 'label',
+                    'confidence': 0.9,
+                }
+            )
+
         return results
     
     def get_model_instance_segmentation(self, num_classes):
