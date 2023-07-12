@@ -61,8 +61,9 @@ def plot_img(image_name):
 # plot_img("3309.png")
 
 _classes = np.insert(classes, 0, "background", axis=0)        # adding a background class for Faster R-CNN
-class_to_int = {_classes[i] : i for i in range(len(_classes))}
-int_to_class = {i : _classes[i] for i in range(len(_classes))}
+class_to_int = {_classes[i] : i for i in range(len(_classes))}  # {'background': 0, 'face_with_mask': 1, 'face_no_mask': 2}
+int_to_class = {i : _classes[i] for i in range(len(_classes))}  # {0: 'background', 1: 'face_with_mask', 2: 'face_no_mask'}
+
 
 class FaceMaskDetectionDataset(Dataset):
     
