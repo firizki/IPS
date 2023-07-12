@@ -60,8 +60,22 @@ df_data = pd.read_csv(DIR_INPUT+"label.csv")
             
 # show_random_images_with_bbox(df_data)
 
-train, test = train_test_split(df_data.name.unique(), test_size=0.2, random_state=23)
-train, valid = train_test_split(train, test_size=0.15, random_state=23)
+file_train_list_path = "train_dataset.txt"
+file_valid_list_path = "valid_dataset.txt"
+
+train = []
+
+with open(file_train_list_path, 'r') as file:
+    for line in file:
+        train.append(line.strip())
+
+valid = []
+
+with open(file_valid_list_path, 'r') as file:
+    for line in file:
+        valid.append(line.strip())
+
+valid, test = train_test_split(valid, test_size=0.5, random_state=23)
 
 def get_image_dimensions(image_path):
     with Image.open(image_path) as img:
