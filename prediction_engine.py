@@ -48,11 +48,14 @@ class PredictionEngine:
         self.model_fasterrcnn.eval()
 
         # RetinaNet #
-        self.model_retinanet = torch.load('trained_models/retinanet_2epoc')
+        self.model_retinanet = torchvision.models.detection.retinanet_resnet50_fpn(weights=None, num_classes = 3)
+        self.model_retinanet.to(torch.device('cpu'))
+        checkpoint = torch.load("trained_models/retinanet/checkpoint_retinanet_9.pth")
+        self.model_retinanet.load_state_dict(checkpoint['model_state_dict'])
         self.model_retinanet.eval()
 
         # YOLOv8 #
-        self.model_yolov8 = YOLO(model="runs/detect/train4/weights/best.pt")
+        self.model_yolov8 = YOLO(model="trained_models/yolov8/train100epochs/weights/best.pt")
 
     def FasterRCNN(self, img_path):
         image_input = Image.open(img_path).convert('RGB')

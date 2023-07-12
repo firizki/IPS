@@ -59,12 +59,12 @@ class IPS:
         # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         # Prediction using RetinaNet
-        # prediction_result = self.prediction.RetinaNet(self.filename)
-        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+        prediction_result = self.prediction.RetinaNet(self.filename)
+        module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         # Prediction using YOLOv8
-        prediction_result = self.prediction.YOLOv8(self.filename)
-        module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+        # prediction_result = self.prediction.YOLOv8(self.filename)
+        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         image_data = Image.open(self.filename)
         image_output = image_data.copy()
