@@ -1,36 +1,9 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from bs4 import BeautifulSoup
-import torchvision
-from torchvision import transforms, datasets, models
 import torch
+import torchvision
+from torchvision import transforms
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
-from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
-from PIL import Image
-import matplotlib.pyplot as plt
-from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
-import matplotlib.patches as patches
-
-import pickle
-import numpy as np
-
-from mtcnn.mtcnn import MTCNN
-from tensorflow import keras
-from matplotlib import pyplot
-
-from absl import app, flags, logging
-from absl.flags import FLAGS
-import cv2
-import os
-import numpy as np
-import tensorflow as tf
-import time
-from PIL import Image
-
-from modules.models import RetinaFaceModel
-from modules.utils import (set_memory_growth, load_yaml, draw_bbox_landm, pad_input_image, recover_pad_output)
-
 from ultralytics import YOLO
+from PIL import Image
 
 class PredictionEngine:
     def __init__(self):
@@ -41,7 +14,6 @@ class PredictionEngine:
         
         # Faster RCNN #
         self.model_fasterrcnn = self.get_model_instance_segmentation(3)
-        # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model_fasterrcnn.to(torch.device('cpu'))
         checkpoint = torch.load("trained_models/fasterrcnn/checkpoint_99.pth")
         self.model_fasterrcnn.load_state_dict(checkpoint['model_state_dict'])
