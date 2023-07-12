@@ -16,6 +16,8 @@ from matplotlib import patches
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 
+from ultralytics import YOLO
+
 DIR_INPUT = "datasets/merged_dataset/"
 DIR_IMAGES = DIR_INPUT + "images/"
 train_path = "datasets/yolodataset/train"
