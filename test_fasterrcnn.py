@@ -80,6 +80,22 @@ def plot_image(img_tensor, annotation):
 
     rect = patches.Rectangle((68, 42), 37, 27, linewidth=1, edgecolor='r', facecolor='none')
     ax.add_patch(rect)
+
+    boxes = annotation['boxes'].cpu().detach().numpy()
+    labels = annotation['labels'].cpu().detach().numpy()
+    scores = annotation['scores'].cpu().detach().numpy()
+
+    results = []
+    for box, label, score in zip(boxes, labels, scores):
+        x1, y1, x2, y2 = box
+        results.append(
+            {
+                'box': [x1, y1, x2-x1, y2-y1],
+                'label': label,
+                'confidence': score,
+            }
+        )
+    print(results)
     
     for box in annotation["boxes"]:
         xmin, ymin, xmax, ymax = box.cpu().data

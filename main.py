@@ -54,29 +54,19 @@ class IPS:
 
         module_logger.info("Load image input: "+ self.filename)
 
-        # Prediction using Keras
-        # result=self.prediction.keras(self.filename)
-        # module_logger.info("Prediction is: " + self.prediction.ResultMap[np.argmax(result)])
-
-        # Prediction using MTCNN
-        # prediction_result = self.prediction.mtcnn(self.filename)
-        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
-
-        # Prediction using Retinaface
-        # prediction_result = self.prediction.retinaface(self.filename)
-        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
-
         # Prediction using FasterRCNN
         prediction_result = self.prediction.FasterRCNN(self.filename)
         module_logger.info("Total face(s) found: " + str(len(prediction_result)))
+
+        # Prediction using RetinaNet
+        # prediction_result = self.prediction.RetinaNet(self.filename)
+        # module_logger.info("Total face(s) found: " + str(len(prediction_result)))
 
         image_data = Image.open(self.filename)
         image_output = image_data.copy()
 
         draw = ImageDraw.Draw(image_output)
         for result in prediction_result:
-            if result['confidence'] < 0.8:
-                continue
             module_logger.info("Prediction result: " + str(result['confidence']))
             
             x, y, width, height = result['box']
