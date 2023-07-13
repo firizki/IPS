@@ -22,7 +22,7 @@ class PredictionEngine:
         # RetinaNet #
         self.model_retinanet = torchvision.models.detection.retinanet_resnet50_fpn(weights=None, num_classes = 3)
         self.model_retinanet.to(torch.device('cpu'))
-        checkpoint = torch.load("trained_models/retinanet/checkpoint_retinanet_9.pth")
+        checkpoint = torch.load("trained_models/retinanet/checkpoint_retinanet_99.pth")
         self.model_retinanet.load_state_dict(checkpoint['model_state_dict'])
         self.model_retinanet.eval()
 
