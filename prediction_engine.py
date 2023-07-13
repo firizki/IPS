@@ -26,6 +26,13 @@ class PredictionEngine:
         self.model_retinanet.load_state_dict(checkpoint['model_state_dict'])
         self.model_retinanet.eval()
 
+        # SSD #
+        self.model_ssd = torchvision.models.detection.ssd300_vgg16(weights=None, num_classes = 3)
+        self.model_ssd.to(torch.device('cpu'))
+        checkpoint = torch.load("trained_models/ssd/checkpoint_ssd_99.pth")
+        self.model_ssd.load_state_dict(checkpoint['model_state_dict'])
+        self.model_ssd.eval()
+
         # YOLOv8 #
         self.model_yolov8 = YOLO(model="trained_models/yolov8/train100epochs/weights/best.pt")
 
@@ -64,6 +71,29 @@ class PredictionEngine:
         results = [] 
         for box, label, score in zip(boxes, labels, scores):
             if score < self.confidence_threshold:
+                continue
+            x1, y1, x2, y2 = box
+            results.append(
+                {
+                    'box': [x1, y1, x2-x1, y2-y1],
+                    'label': label,
+                    'confidence': score,
+                }
+            )
+        return results
+    
+    def SSD(self, img_path):
+        image_input = Image.open(img_path).convert('RGB')
+        tensor_image = self.image_transform(image_input)
+        preds = self.model_ssd([tensor_image])
+
+        boxes = preds[0]['boxes'].cpu().detach().numpy()
+        labels = preds[0]['labels'].cpu().detach().numpy()
+        scores = preds[0]['scores'].cpu().detach().numpy()
+
+        results = [] 
+        for box, label, score in zip(boxes, labels, scores):
+            if score < 0.5:
                 continue
             x1, y1, x2, y2 = box
             results.append(
