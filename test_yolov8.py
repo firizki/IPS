@@ -20,17 +20,19 @@ import ultralytics
 from ultralytics import YOLO
 ultralytics.checks()
 
-model = YOLO(model="runs/detect/train4/weights/best.pt")
+file = open("valid_dataset.txt", "r")
+test_files = []
+for line in file:
+    test_files.append(line.strip())
+file.close()
 
-results = model(["data/utm_face_example.jpg"])
+model = YOLO(model="runs/detect/train/weights/best.pt")
 
-# print(results)
+results = model(["datasets/merged_dataset/images/3642.png"])
 
 for box in results[0].boxes:
-    # boxes = box.boxes  # Boxes object for bbox outputs
-    # masks = result.masks  # Masks object for segmentation masks outputs
-    # keypoints = result.keypoints  # Keypoints object for pose outputs
-    # probs = result.probs  # Class probabilities for classification outputs
+    print(int(box.cls.cpu().detach().numpy()[0])+1)
+    print(box.conf.cpu().detach().numpy()[0])
     x1, y1, x2, y2 = box.xyxy.cpu().detach().numpy()[0]
     print(x1, y1, x2, y2)
 

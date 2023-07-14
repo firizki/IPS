@@ -10,5 +10,6 @@ lightning_logs/
 models/
 result_test/
 runs/
+runs101/
 trained_models/
 .venv/
