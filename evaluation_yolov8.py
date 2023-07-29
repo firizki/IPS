@@ -126,7 +126,7 @@ for epoch in tqdm(epochs):
                 total_fp += fp
                 total_fn += (len(source_grounds)-len(removed_grounds))+(len(pred_results)-len(removed_results))
 
-            total_epoch=epoch+1
+            total_epoch=epoch
             precision=(total_tp)/(total_tp+total_fp)
             recall=(total_tp)/(total_tp+total_fn)
             accuracy=(total_tp)/(total_tp+total_fp+total_fn)

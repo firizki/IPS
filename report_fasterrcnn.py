@@ -10,7 +10,7 @@ line_pair =[
     (0.8,0.7),(0.8,0.8),(0.8,0.9),
     (0.9,0.7),(0.9,0.8),(0.9,0.9)]
 
-df = pd.read_csv("metrics_ssd.csv")
+df = pd.read_csv("metrics_yolov8.csv")
 
 filtered_data = [df.loc[(df['iou_threshold'] == lp[0]) & (df['confidence_threshold'] == lp[1])] for lp in line_pair]
 
